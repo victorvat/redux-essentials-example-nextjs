@@ -1,19 +1,11 @@
 import React from 'react'
 import Head from 'next/head'
-import { useAppSelector } from '@/redux/app/hooks'
 import Navbar from '@/components/Navbar'
+import { PostsList } from '@/components/PostsList'
+import AddPostForm from '@/components/AddPostForm'
 
 export default function Home() {
-  const posts = useAppSelector(state => state.posts)
 
-  const renderedPosts = posts.map(post => (
-    <article className="post-excerpt" key={post.id}>
-      <h3>{post.title}</h3>
-      <p className="post-content">{post.content.substring(0, 100)}</p>
-    </article>
-
-  ))  
-  
   return (
     <>
       <Head>
@@ -23,10 +15,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-      <section className="posts-list">
-        <h2>Posts</h2>
-        {renderedPosts}
-      </section>
+      <AddPostForm />
+      <PostsList />
     </>
   )
 }
