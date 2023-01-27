@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React, { FunctionComponent } from 'react'
 
 const Navbar: FunctionComponent = () => {
@@ -8,6 +9,7 @@ const Navbar: FunctionComponent = () => {
 
         <div className="navContent">
           <div className="navLinks"></div>
+          <Link href="/">Posts</Link>
         </div>
       </section>
     </nav>

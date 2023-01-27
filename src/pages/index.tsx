@@ -3,9 +3,9 @@ import Head from 'next/head'
 import Navbar from '@/components/Navbar'
 import { PostsList } from '@/components/PostsList'
 import AddPostForm from '@/components/AddPostForm'
+import { NextPage } from 'next'
 
-export default function Home() {
-
+const Home: NextPage = (): JSX.Element => {
   return (
     <>
       <Head>
@@ -20,3 +20,5 @@ export default function Home() {
     </>
   )
 }
+
+export default Home;
