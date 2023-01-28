@@ -1,6 +1,5 @@
 import { useAppSelector } from '@/redux/app/hooks';
 import React, { FunctionComponent } from 'react';
-import { useSelector } from 'react-redux';
 
 type PostAuthorProps = {
   userId: string;

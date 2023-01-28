@@ -1,35 +1,76 @@
-import { useAppSelector } from '@/redux/app/hooks';
-import { selectAllPosts } from '@/redux/features/posts/postsSlice';
+import { useAppSelector, useAppDispatch } from '@/redux/app/hooks';
+import {
+  fetchPosts,
+  IPostTuple,
+  selectAllPosts,
+} from '@/redux/features/posts/postsSlice';
 import Link from 'next/link';
-import React from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import { PostAuthor } from './PostAuthor';
 import { ReactionButtons } from './ReactionButtons';
 import { TimeAgo } from './TimeAgo';
+import { Spinner } from './Spinner';
 
-export const PostsList = () => {
-  const posts = useAppSelector(selectAllPosts);
-  // Sort posts in reverse chronological order by datetime string
-  const orderedPosts = posts
-    .slice()
-    .sort((a, b) => b.date.localeCompare(a.date));
-
-  const renderedPosts = orderedPosts.map((post) => (
-    <article className="post-excerpt" key={post.id}>
+type IPostExcerptProps = {
+  post: IPostTuple;
+};
+const PostExcerpt: FunctionComponent<IPostExcerptProps> = ({ post }) => {
+  return (
+    <article className="post-excerpt">
       <h3>{post.title}</h3>
-      <PostAuthor userId={post.user} />
-      <TimeAgo timestamp={post.date} />
-      <ReactionButtons post={post} />
+      <div>
+        <PostAuthor userId={post.user.id} />
+        <TimeAgo timestamp={post.date} />
+      </div>
       <p className="post-content">{post.content.substring(0, 100)}</p>
-      <Link href={`/show/${post.id}`} className="button muted-button">
+
+      <ReactionButtons post={post} />
+      <Link href={`/posts/${post.id}`} className="button muted-button">
         View Post
       </Link>
     </article>
-  ));
+  );
+};
+
+export const PostsList = () => {
+  const dispatch = useAppDispatch();
+  const posts = useAppSelector(selectAllPosts);
+
+  const postStatus = useAppSelector((state) => state.posts.status);
+  const error = useAppSelector((state) => state.posts.error);
+
+  // console.log('posts are:', posts);
+  // console.log('postStatus are:', postStatus);
+  // console.log('error is:', error);
+
+  useEffect(() => {
+    if (postStatus === 'idle') {
+      // debugger;
+      dispatch(fetchPosts());
+    }
+  }, [postStatus, dispatch]);
+
+  let content;
+
+  if (postStatus === 'loading') {
+    content = <Spinner text="Loading..." />;
+  } else if (postStatus === 'succeeded') {
+    // Sort posts in reverse chronological order by datetime string
+    const orderedPosts = posts
+      .slice()
+      .sort((a, b) => b.date.localeCompare(a.date));
+
+    content = orderedPosts.map((post) => (
+      <PostExcerpt key={post.id} post={post} />
+    ));
+  } else if (postStatus === 'failed') {
+    content = <div>{error}</div>;
+  }
 
   return (
     <section className="posts-list">
       <h2>Posts</h2>
-      {renderedPosts}
+      {content}
     </section>
   );
 };
