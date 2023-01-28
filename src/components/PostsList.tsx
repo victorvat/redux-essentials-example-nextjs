@@ -1,4 +1,5 @@
 import { useAppSelector } from '@/redux/app/hooks';
+import { selectAllPosts } from '@/redux/features/posts/postsSlice';
 import Link from 'next/link';
 import React from 'react';
 import { PostAuthor } from './PostAuthor';
@@ -6,7 +7,7 @@ import { ReactionButtons } from './ReactionButtons';
 import { TimeAgo } from './TimeAgo';
 
 export const PostsList = () => {
-  const posts = useAppSelector((state) => state.posts);
+  const posts = useAppSelector(selectAllPosts);
   // Sort posts in reverse chronological order by datetime string
   const orderedPosts = posts
     .slice()

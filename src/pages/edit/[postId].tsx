@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useAppDispatch, useAppSelector } from '@/redux/app/hooks';
-import { postUpdated } from '@/redux/features/posts/postsSlice';
+import { postUpdated, selectPostById } from '@/redux/features/posts/postsSlice';
 
 const EditPostPage: NextPage = (): JSX.Element => {
   const router = useRouter();
   const { postId } = router.query;
 
   const post = useAppSelector((state) =>
-    state.posts.find((post) => post.id === postId)
+    selectPostById(state, postId as string)
   );
 
   const [title, setTitle] = useState(post?.title);

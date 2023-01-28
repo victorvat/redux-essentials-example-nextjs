@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useAppSelector } from '@/redux/app/hooks';
 import Link from 'next/link';
 import { ReactionButtons } from '@/components/ReactionButtons';
+import { selectPostById } from '@/redux/features/posts/postsSlice';
 
 /**
  * SinglePostPage
@@ -13,7 +14,7 @@ const ShowPostPage: NextPage = (): JSX.Element => {
   const { postId } = router.query;
 
   const post = useAppSelector((state) =>
-    state.posts.find((post) => post.id === postId)
+    selectPostById(state, postId as string)
   );
 
   if (!post) {
