@@ -2,14 +2,14 @@ import { createSlice, nanoid, PayloadAction } from '@reduxjs/toolkit';
 import { sub } from 'date-fns';
 
 export enum ReactionEnum {
-  thumbsUp = "thumbsUp",
-  hooray = "hooray",
-  heart = "heart",
-  rocket = "rocket",
-  eyes = "eyes"
+  thumbsUp = 'thumbsUp',
+  hooray = 'hooray',
+  heart = 'heart',
+  rocket = 'rocket',
+  eyes = 'eyes',
 }
 
-interface IReactions extends Record<ReactionEnum, number> {};
+interface IReactions extends Record<ReactionEnum, number> {}
 
 export type IPostTuple = {
   id: string;
@@ -42,11 +42,14 @@ const postsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
-    reactionAdded(state, action: PayloadAction<{ postId: string; reaction: ReactionEnum }>) {
-      const { postId, reaction } = action.payload
-      const existingPost = state.find(post => post.id === postId)
+    reactionAdded(
+      state,
+      action: PayloadAction<{ postId: string; reaction: ReactionEnum }>
+    ) {
+      const { postId, reaction } = action.payload;
+      const existingPost = state.find((post) => post.id === postId);
       if (existingPost) {
-        existingPost.reactions[reaction]++
+        existingPost.reactions[reaction]++;
       }
     },
 
