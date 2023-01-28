@@ -6,7 +6,7 @@ export const store = configureStore({
   reducer: {
     posts: postsReducer,
     users: usersReducer,
-  }
+  },
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

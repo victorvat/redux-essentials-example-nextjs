@@ -1,9 +1,9 @@
-import React from 'react'
-import Head from 'next/head'
-import Navbar from '@/components/Navbar'
-import { PostsList } from '@/components/PostsList'
-import AddPostForm from '@/components/AddPostForm'
-import { NextPage } from 'next'
+import React from 'react';
+import Head from 'next/head';
+import Navbar from '@/components/Navbar';
+import { PostsList } from '@/components/PostsList';
+import AddPostForm from '@/components/AddPostForm';
+import { NextPage } from 'next';
 
 const Home: NextPage = (): JSX.Element => {
   return (
@@ -18,7 +18,7 @@ const Home: NextPage = (): JSX.Element => {
       <AddPostForm />
       <PostsList />
     </>
-  )
-}
+  );
+};
 
 export default Home;

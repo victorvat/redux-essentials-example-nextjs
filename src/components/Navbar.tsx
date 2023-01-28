@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React, { FunctionComponent } from 'react'
+import React, { FunctionComponent } from 'react';
 
 const Navbar: FunctionComponent = () => {
   return (
@@ -13,7 +13,7 @@ const Navbar: FunctionComponent = () => {
         </div>
       </section>
     </nav>
-  )
-}
+  );
+};
 
 export default Navbar;

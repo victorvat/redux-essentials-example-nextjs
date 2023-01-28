@@ -1,32 +1,34 @@
-import React, { useState } from 'react'
-import { NextPage } from 'next'
-import { useRouter } from 'next/router'
-import { useAppDispatch, useAppSelector } from '@/redux/app/hooks'
-import { postUpdated } from '@/redux/features/posts/postsSlice'
+import React, { useState } from 'react';
+import { NextPage } from 'next';
+import { useRouter } from 'next/router';
+import { useAppDispatch, useAppSelector } from '@/redux/app/hooks';
+import { postUpdated } from '@/redux/features/posts/postsSlice';
 
 const EditPostPage: NextPage = (): JSX.Element => {
-  const router = useRouter()
-  const { postId } = router.query
+  const router = useRouter();
+  const { postId } = router.query;
 
-  const post = useAppSelector(state =>
-    state.posts.find(post => post.id === postId)
-  )
+  const post = useAppSelector((state) =>
+    state.posts.find((post) => post.id === postId)
+  );
 
-  const [title, setTitle] = useState(post?.title)
-  const [content, setContent] = useState(post?.content)
+  const [title, setTitle] = useState(post?.title);
+  const [content, setContent] = useState(post?.content);
 
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   // const history = useHistory()
 
-  const onTitleChanged = (e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)
-  const onContentChanged = (e: React.ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)
+  const onTitleChanged = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setTitle(e.target.value);
+  const onContentChanged = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
+    setContent(e.target.value);
 
   const onSavePostClicked = () => {
     if (title && content) {
-      dispatch(postUpdated({ id: postId, title, content }))
-      router.push(`/posts/${postId}`)
+      dispatch(postUpdated({ id: postId, title, content }));
+      router.push(`/posts/${postId}`);
     }
-  }
+  };
 
   return (
     <section>
@@ -53,6 +55,6 @@ const EditPostPage: NextPage = (): JSX.Element => {
         Save Post
       </button>
     </section>
-  )
-}
+  );
+};
 export default EditPostPage;
