@@ -15,17 +15,18 @@ type IPostExcerptProps = {
   post: IPostTuple;
 };
 const PostExcerpt: FunctionComponent<IPostExcerptProps> = ({ post }) => {
+  // console.log("PostExcerpt(): post is:", post)
   return (
     <article className="post-excerpt">
       <h3>{post.title}</h3>
       <div>
-        <PostAuthor userId={post.user.id} />
+        <PostAuthor userId={post.user} />
         <TimeAgo timestamp={post.date} />
       </div>
       <p className="post-content">{post.content.substring(0, 100)}</p>
 
       <ReactionButtons post={post} />
-      <Link href={`/posts/${post.id}`} className="button muted-button">
+      <Link href={`/show/${post.id}`} className="button muted-button">
         View Post
       </Link>
     </article>
