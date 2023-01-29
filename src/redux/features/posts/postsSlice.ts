@@ -1,5 +1,9 @@
 import { RootState } from '@/redux/app/store';
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  createSelector,
+} from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 // import { sub } from 'date-fns';
 // import { IUserTuple } from '../users/usersSlice';
@@ -124,3 +128,8 @@ export const selectAllPosts = (state: RootState) => {
 
 export const selectPostById = (state: RootState, postId: string) =>
   state.posts.posts.find((post) => post.id === postId);
+
+export const selectPostsByUser = createSelector(
+  [selectAllPosts, (state, userId) => userId],
+  (posts, userId) => posts.filter((post) => post.user === userId)
+);
