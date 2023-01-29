@@ -38,12 +38,8 @@ const initialState: IPostsState = {
 };
 
 export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
-  // debugger;
   const response = await fetch('/api/fakeApi/posts');
-  // debugger;
   const result = await response.json();
-  // debugger;
-  // console.log('fetchPosts returns result:', result);
   return result;
 });
 
@@ -121,7 +117,10 @@ export const { reactionAdded, postUpdated } = postsSlice.actions;
 
 export default postsSlice.reducer;
 
-export const selectAllPosts = (state: RootState) => state.posts.posts;
+export const selectAllPosts = (state: RootState) => {
+  // debugger;
+  return state.posts.posts;
+};
 
 export const selectPostById = (state: RootState, postId: string) =>
   state.posts.posts.find((post) => post.id === postId);

@@ -1,3 +1,4 @@
+import { RootState } from '@/redux/app/store';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 export type IUserTuple = {
@@ -22,5 +23,9 @@ const usersSlice = createSlice({
     });
   },
 });
+
+export const selectAllUsers = (state: RootState) => state.users;
+export const selectUserById = (state: RootState, userId: string) =>
+  state.users.find((user) => user.id === userId);
 
 export default usersSlice.reducer;

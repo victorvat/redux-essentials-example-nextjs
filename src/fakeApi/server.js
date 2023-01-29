@@ -6,7 +6,7 @@ import seedrandom from 'seedrandom';
 // import {Server as MockSocketServer} from 'mock-socket';
 import { setRandom } from 'txtgen';
 
-// import {parseISO} from 'date-fns';
+import { parseISO } from 'date-fns';
 
 const NUM_USERS = 3;
 const POSTS_PER_USER = 3;
@@ -42,16 +42,16 @@ if (useSeededRNG) {
   faker.seed(seedDate.getTime());
 }
 
-// function getRandomInt (min, max) {
-//   min = Math.ceil(min);
-//   max = Math.floor(max);
-//   return Math.floor(rng() * (max - min + 1)) + min;
-// }
+export function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(rng() * (max - min + 1)) + min;
+}
 
-// const randomFromArray = (array) => {
-//   const index = getRandomInt(0, array.length - 1);
-//   return array[ index ];
-// };
+const randomFromArray = (array) => {
+  const index = getRandomInt(0, array.length - 1);
+  return array[index];
+};
 
 /* MSW Data Model Setup */
 
@@ -267,36 +267,36 @@ export const serializePost = (post) => ({
 
 /* Random Notifications Generation */
 
-// const notificationTemplates = [
-//   'poked you',
-//   'says hi!',
-//   `is glad we're friends`,
-//   'sent you a gift',
-// ];
+const notificationTemplates = [
+  'poked you',
+  'says hi!',
+  `is glad we're friends`,
+  'sent you a gift',
+];
 
-// function generateRandomNotifications (since, numNotifications, db) {
-//   const now = new Date();
-//   let pastDate;
+export function generateRandomNotifications(since, numNotifications, db) {
+  const now = new Date();
+  let pastDate;
 
-//   if (since) {
-//     pastDate = parseISO(since);
-//   } else {
-//     pastDate = new Date(now.valueOf());
-//     pastDate.setMinutes(pastDate.getMinutes() - 15);
-//   }
+  if (since) {
+    pastDate = parseISO(since);
+  } else {
+    pastDate = new Date(now.valueOf());
+    pastDate.setMinutes(pastDate.getMinutes() - 15);
+  }
 
-//   // Create N random notifications. We won't bother saving these
-//   // in the DB - just generate a new batch and return them.
-//   const notifications = [ ...Array(numNotifications) ].map(() => {
-//     const user = randomFromArray(db.user.getAll());
-//     const template = randomFromArray(notificationTemplates);
-//     return {
-//       id: nanoid(),
-//       date: faker.date.between(pastDate, now).toISOString(),
-//       message: template,
-//       user: user.id,
-//     };
-//   });
+  // Create N random notifications. We won't bother saving these
+  // in the DB - just generate a new batch and return them.
+  const notifications = [...Array(numNotifications)].map(() => {
+    const user = randomFromArray(db.user.getAll());
+    const template = randomFromArray(notificationTemplates);
+    return {
+      id: nanoid(),
+      date: faker.date.between(pastDate, now).toISOString(),
+      message: template,
+      user: user.id,
+    };
+  });
 
-//   return notifications;
-// }
+  return notifications;
+}
