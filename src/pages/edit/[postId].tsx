@@ -4,6 +4,10 @@ import { useRouter } from 'next/router';
 import { useAppDispatch, useAppSelector } from '@/redux/app/hooks';
 import { postUpdated, selectPostById } from '@/redux/features/posts/postsSlice';
 
+/**
+ *
+ * EditPostForm
+ */
 const EditPostPage: NextPage = (): JSX.Element => {
   const router = useRouter();
   const { postId } = router.query;

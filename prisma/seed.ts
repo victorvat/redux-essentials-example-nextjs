@@ -13,17 +13,17 @@ const prisma = new PrismaClient();
 
   await prisma.$transaction(async (tx) => {
     await tx.user.createMany({
-      data: users
-    })
+      data: users,
+    });
     await tx.post.createMany({
-      data: posts
-    })
+      data: posts,
+    });
     await tx.notification.createMany({
-      data: notifications
-    })
+      data: notifications,
+    });
     await tx.reaction.createMany({
-      data: reactions
-    })
+      data: reactions,
+    });
   });
 })()
   .then(() => {
@@ -37,4 +37,4 @@ const prisma = new PrismaClient();
     console.info('seed finished');
   });
 
-export { };
+export {};

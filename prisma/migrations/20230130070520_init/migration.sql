@@ -61,3 +61,8 @@ ALTER TABLE "notification" ALTER COLUMN "date" SET DEFAULT CURRENT_TIMESTAMP;
 
 -- AlterTable
 ALTER TABLE "post" ALTER COLUMN "date" SET DEFAULT CURRENT_TIMESTAMP;
+
+-- Move sequences current value
+SELECT setval('public.post_id_seq', 101, true);
+SELECT setval('public.notification_id_seq', 101, true);
+SELECT setval('public.user_id_seq', 101, true);
