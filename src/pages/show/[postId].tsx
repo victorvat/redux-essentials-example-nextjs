@@ -3,10 +3,10 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { ReactionButtons } from '@/components/ReactionButtons';
-import { useGetPostQuery } from '@/redux/features/api/apiSlice';
 import { Spinner } from '@/components/Spinner';
 import { PostAuthor } from '@/components/PostAuthor';
 import { TimeAgo } from '@/components/TimeAgo';
+import { useGetPostQuery } from '@/redux/features/posts/postsSlice';
 
 /**
  * SinglePostPage

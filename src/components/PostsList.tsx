@@ -1,11 +1,13 @@
-import { IPostTuple } from '@/redux/features/posts/postsSlice';
+import {
+  IPostTuple,
+  useGetPostsQuery,
+} from '@/redux/features/posts/postsSlice';
 import Link from 'next/link';
 import React, { FunctionComponent, useMemo } from 'react';
 import { PostAuthor } from './PostAuthor';
 import { ReactionButtons } from './ReactionButtons';
 import { TimeAgo } from './TimeAgo';
 import { Spinner } from './Spinner';
-import { useGetPostsQuery } from '@/redux/features/api/apiSlice';
 import classnames from 'classnames';
 
 type IPostExcerptProps = {

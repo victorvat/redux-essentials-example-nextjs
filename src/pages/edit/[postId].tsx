@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
+import { Spinner } from '@/components/Spinner';
 import {
   useEditPostMutation,
   useGetPostQuery,
-} from '@/redux/features/api/apiSlice';
-import { Spinner } from '@/components/Spinner';
+} from '@/redux/features/posts/postsSlice';
 
 /**
  *

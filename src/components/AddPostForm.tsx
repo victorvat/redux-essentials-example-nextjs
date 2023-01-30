@@ -1,5 +1,5 @@
-import { useAppSelector } from '@/redux/app/hooks';
-import { useAddNewPostMutation } from '@/redux/features/api/apiSlice';
+import { useAddNewPostMutation } from '@/redux/features/posts/postsSlice';
+import { useGetUsersQuery } from '@/redux/features/users/usersSlice';
 import React, { FunctionComponent, useState } from 'react';
 
 const AddPostForm: FunctionComponent = () => {
@@ -8,7 +8,10 @@ const AddPostForm: FunctionComponent = () => {
   const [userId, setUserId] = useState('');
 
   const [addNewPost, { isLoading }] = useAddNewPostMutation();
-  const users = useAppSelector((state) => state.users);
+
+  const {
+    data: users = [], // undefined until the response is received
+  } = useGetUsersQuery(undefined);
 
   const onTitleChanged = (e: React.ChangeEvent<HTMLInputElement>) =>
     setTitle(e.target.value);
@@ -31,6 +34,7 @@ const AddPostForm: FunctionComponent = () => {
       }
     }
   };
+
   const usersOptions = users.map((user) => (
     <option key={user.id} value={user.id}>
       {user.name}
