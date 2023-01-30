@@ -31,7 +31,7 @@ const ShowPostPage: NextPage = (): JSX.Element => {
         </div>
         <p className="post-content">{post.content}</p>
         <ReactionButtons post={post} />
-        <Link href={`/api/edit/${post.id}`} className="button">
+        <Link href={`/edit/${post.id}`} className="button">
           Edit Post
         </Link>
       </article>

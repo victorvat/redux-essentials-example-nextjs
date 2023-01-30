@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useAppDispatch, useAppSelector } from '@/redux/app/hooks';
-import { postUpdated, selectPostById } from '@/redux/features/posts/postsSlice';
+import {
+  useEditPostMutation,
+  useGetPostQuery,
+} from '@/redux/features/api/apiSlice';
+import { Spinner } from '@/components/Spinner';
 
 /**
  *
@@ -12,53 +15,60 @@ const EditPostPage: NextPage = (): JSX.Element => {
   const router = useRouter();
   const { postId } = router.query;
 
-  const post = useAppSelector((state) =>
-    selectPostById(state, postId as string)
-  );
+  const { data: post } = useGetPostQuery(postId);
+
+  const [updatePost, { isLoading }] = useEditPostMutation();
 
   const [title, setTitle] = useState(post?.title);
   const [content, setContent] = useState(post?.content);
-
-  const dispatch = useAppDispatch();
-  // const history = useHistory()
 
   const onTitleChanged = (e: React.ChangeEvent<HTMLInputElement>) =>
     setTitle(e.target.value);
   const onContentChanged = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
     setContent(e.target.value);
 
-  const onSavePostClicked = () => {
+  const onSavePostClicked = async () => {
     if (title && content) {
-      dispatch(postUpdated({ id: postId, title, content }));
-      router.push(`/posts/${postId}`);
+      await updatePost({ id: postId, title, content });
+      router.push(`/show/${postId}`);
     }
   };
 
-  return (
-    <section>
-      <h2>Edit Post</h2>
-      <form>
-        <label htmlFor="postTitle">Post Title:</label>
-        <input
-          type="text"
-          id="postTitle"
-          name="postTitle"
-          placeholder="What's on your mind?"
-          value={title}
-          onChange={onTitleChanged}
-        />
-        <label htmlFor="postContent">Content:</label>
-        <textarea
-          id="postContent"
-          name="postContent"
-          value={content}
-          onChange={onContentChanged}
-        />
-      </form>
-      <button type="button" onClick={onSavePostClicked}>
-        Save Post
-      </button>
-    </section>
-  );
+  let render;
+
+  if (isLoading) {
+    render = <Spinner text="Loading..." />;
+  } else if (post) {
+    render = (
+      <section>
+        <h2>Edit Post</h2>
+        <form>
+          <label htmlFor="postTitle">Post Title:</label>
+          <input
+            type="text"
+            id="postTitle"
+            name="postTitle"
+            placeholder="What's on your mind?"
+            value={title}
+            onChange={onTitleChanged}
+          />
+          <label htmlFor="postContent">Content:</label>
+          <textarea
+            id="postContent"
+            name="postContent"
+            value={content}
+            onChange={onContentChanged}
+          />
+        </form>
+        <button type="button" onClick={onSavePostClicked}>
+          Save Post
+        </button>
+      </section>
+    );
+  } else {
+    render = <h3>Page not found</h3>;
+  }
+
+  return <section>{render}</section>;
 };
 export default EditPostPage;

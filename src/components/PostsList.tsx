@@ -1,6 +1,4 @@
-import {
-  IPostTuple,
-} from '@/redux/features/posts/postsSlice';
+import { IPostTuple } from '@/redux/features/posts/postsSlice';
 import Link from 'next/link';
 import React, { FunctionComponent, useMemo } from 'react';
 import { PostAuthor } from './PostAuthor';

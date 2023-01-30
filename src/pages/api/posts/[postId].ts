@@ -41,6 +41,26 @@ const handler = async (
     } finally {
       await prisma.$disconnect();
     }
+  } else if (req.method === 'PATCH') {
+    // debugger;
+    try {
+      await prisma.$connect();
+      const post: IPost | null = await prisma.post.update({
+        select: validPostSelect,
+        data: {
+          content: req.body.content,
+          title: req.body.title,
+        },
+        where: {
+          id: Number(req.body.id as string),
+        },
+      });
+      return res.status(200).send(post);
+    } catch (error) {
+      return res.status(500).send(`${JSON.stringify(error)}`);
+    } finally {
+      await prisma.$disconnect();
+    }
   }
 
   return res.status(405).send(`${req.method} is not allowed`);
