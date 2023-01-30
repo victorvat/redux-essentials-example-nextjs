@@ -5,7 +5,8 @@ import {
   createSelector,
 } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-// import { sub } from 'date-fns';
+import { IPost } from '@/pages/api/posts';
+// import { /*sub, */ parseISO } from 'date-fns';
 // import { IUserTuple } from '../users/usersSlice';
 
 export enum ReactionEnum {
@@ -41,18 +42,62 @@ const initialState: IPostsState = {
   error: null,
 };
 
-export const fetchPosts = createAsyncThunk('posts/fetchPosts', async () => {
-  const response = await fetch('/api/fakeApi/posts');
-  const result = await response.json();
-  return result;
-});
+export const fetchPosts = createAsyncThunk(
+  'posts/fetchPosts',
+  async (): Promise<IPostTuple[]> => {
+    const response = await fetch('/api/posts');
+    const json = (await response.json()) as IPost[];
+    // debugger;
+    const result: IPostTuple[] = json.map((tuple) => ({
+      id: tuple.id.toString(),
+      title: tuple.title,
+      content: tuple.content,
+      user: tuple.userId.toString(),
+      date: tuple.date as unknown as string,
+      reactions: {
+        thumbsUp:
+          tuple.Reaction &&
+          Array.isArray(tuple.Reaction) &&
+          tuple.Reaction.length > 0
+            ? tuple.Reaction[0].thumbsUp
+            : 0,
+        hooray:
+          tuple.Reaction &&
+          Array.isArray(tuple.Reaction) &&
+          tuple.Reaction.length > 0
+            ? tuple.Reaction[0].hooray
+            : 0,
+        heart:
+          tuple.Reaction &&
+          Array.isArray(tuple.Reaction) &&
+          tuple.Reaction.length > 0
+            ? tuple.Reaction[0].heart
+            : 0,
+        rocket:
+          tuple.Reaction &&
+          Array.isArray(tuple.Reaction) &&
+          tuple.Reaction.length > 0
+            ? tuple.Reaction[0].rocket
+            : 0,
+        eyes:
+          tuple.Reaction &&
+          Array.isArray(tuple.Reaction) &&
+          tuple.Reaction.length > 0
+            ? tuple.Reaction[0].eyes
+            : 0,
+      },
+    }));
+    return result;
+  }
+);
 
 export const addNewPost = createAsyncThunk(
   'posts/addNewPost',
   // The payload creator receives the partial `{title, content, user}` object
   async (initialPost: { title: string; content: string; user: string }) => {
     // We send the initial data to the fake API server
-    const response = await fetch(`/api/fakeApi/posts`, {
+    // debugger;
+    const response = await fetch(`/api/posts`, {
       method: 'POST',
       mode: 'cors',
       cache: 'no-cache',

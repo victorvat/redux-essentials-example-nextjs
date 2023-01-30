@@ -21,8 +21,12 @@ type ReactionButtonsProps = {
 export const ReactionButtons: FunctionComponent<ReactionButtonsProps> = ({
   post,
 }) => {
+  // console.log("ReactionButtons() post is:", post)
+  // console.log("ReactionButtons() post?.reactions is:", post?.reactions)
   const dispatch = useAppDispatch();
   const reactionButtons = Object.entries(reactionEmoji).map(([name, emoji]) => {
+    // console.log("ReactionButtons() name is:", name);
+    // console.log("post?.reactions[name as ReactionEnum] is:", post?.reactions[name as ReactionEnum])
     return (
       <button
         key={name}
@@ -34,7 +38,7 @@ export const ReactionButtons: FunctionComponent<ReactionButtonsProps> = ({
           )
         }
       >
-        {`${emoji} ${post.reactions[name as ReactionEnum]}`}
+        {`${emoji} ${post?.reactions[name as ReactionEnum]}`}
       </button>
     );
   });
