@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Notification {
+  id      Int      @id(map: "pk_notification") @default(autoincrement())
+  postId  Int      @map("post_id")
+  date    DateTime @default(dbgenerated("CURRENT_TIMESTAMP")) @db.Timestamptz(6)
+  message String
+  read    Boolean
+  isNew   Boolean  @map("is_new")
+  Post    Post     @relation(fields: [postId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_notification_post_post_id")
+
+  @@index([postId], map: "ifk_notification_post_post_id")
+  @@map("notification")
+}
+
+model Post {
+  id           Int            @id(map: "pk_post") @default(autoincrement())
+  userId       Int            @map("user_id")
+  title        String
+  content      String
+  date         DateTime       @default(dbgenerated("CURRENT_TIMESTAMP")) @db.Timestamptz(6)
+  User         User           @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_post_user_user_id")
+  Notification Notification[]
+  Reaction     Reaction[]
+
+  @@index([userId], map: "ifk_post_user_user_id")
+  @@map("post")
+}
+
+model Reaction {
+  postId   Int  @id(map: "pk_reaction") @map("post_id")
+  thumbsUp Int  @map("thumbs_up")
+  hooray   Int
+  heart    Int
+  rocket   Int
+  eyes     Int
+  Post     Post @relation(fields: [postId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_reaction_post_post_id")
+
+  @@map("reaction")
+}
+
+model User {
+  id   Int    @id(map: "pk_user") @default(autoincrement())
+  name String
+  Post Post[]
+
+  @@map("user")
+}
