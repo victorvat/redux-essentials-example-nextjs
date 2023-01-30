@@ -1,15 +1,14 @@
-import { useAppSelector, useAppDispatch } from '@/redux/app/hooks';
 import {
-  fetchPosts,
   IPostTuple,
-  selectAllPosts,
 } from '@/redux/features/posts/postsSlice';
 import Link from 'next/link';
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 import { PostAuthor } from './PostAuthor';
 import { ReactionButtons } from './ReactionButtons';
 import { TimeAgo } from './TimeAgo';
 import { Spinner } from './Spinner';
+import { useGetPostsQuery } from '@/redux/features/api/apiSlice';
+import classnames from 'classnames';
 
 type IPostExcerptProps = {
   post: IPostTuple;
@@ -20,8 +19,8 @@ const PostExcerpt: FunctionComponent<IPostExcerptProps> = ({ post }) => {
     <article className="post-excerpt">
       <h3>{post.title}</h3>
       <div>
-        <PostAuthor userId={post.user} />
-        <TimeAgo timestamp={post.date} />
+        <PostAuthor author={post.User.name} />
+        <TimeAgo timestamp={post.date as unknown as string} />
       </div>
       <p className="post-content">{post.content.substring(0, 100)}</p>
 
@@ -34,43 +33,45 @@ const PostExcerpt: FunctionComponent<IPostExcerptProps> = ({ post }) => {
 };
 
 export const PostsList = () => {
-  const dispatch = useAppDispatch();
-  const posts = useAppSelector(selectAllPosts);
+  const {
+    data: posts = [], // undefined until the response is received
+    isLoading,
+    isFetching,
+    isSuccess,
+    isError,
+    error, // a serialized error object
+    refetch,
+  } = useGetPostsQuery(undefined);
 
-  const postStatus = useAppSelector((state) => state.posts.status);
-  const error = useAppSelector((state) => state.posts.error);
-
-  // console.log('posts are:', posts);
-  // console.log('postStatus are:', postStatus);
-  // console.log('error is:', error);
-
-  useEffect(() => {
-    if (postStatus === 'idle') {
-      // debugger;
-      dispatch(fetchPosts());
-    }
-  }, [postStatus, dispatch]);
+  const sortedPosts = useMemo(() => {
+    const sortedPosts = (posts as IPostTuple[]).slice();
+    // Sort posts in descending chronological order
+    sortedPosts.sort((a, b) => b.date.localeCompare(a.date));
+    return sortedPosts;
+  }, [posts]);
 
   let content;
 
-  if (postStatus === 'loading') {
+  if (isLoading) {
     content = <Spinner text="Loading..." />;
-  } else if (postStatus === 'succeeded') {
-    // Sort posts in reverse chronological order by datetime string
-    const orderedPosts = posts
-      .slice()
-      .sort((a, b) => b.date.localeCompare(a.date));
-
-    content = orderedPosts.map((post) => (
+  } else if (isSuccess) {
+    const renderedPosts = sortedPosts.map((post) => (
       <PostExcerpt key={post.id} post={post} />
     ));
-  } else if (postStatus === 'failed') {
-    content = <div>{error}</div>;
+
+    const containerClassname = classnames('posts-container', {
+      disabled: isFetching,
+    });
+
+    content = <div className={containerClassname}>{renderedPosts}</div>;
+  } else if (isError) {
+    content = <div>{error.toString()}</div>;
   }
 
   return (
     <section className="posts-list">
       <h2>Posts</h2>
+      <button onClick={refetch}>Refetch Posts</button>
       {content}
     </section>
   );

@@ -1,14 +1,10 @@
-import { useAppSelector } from '@/redux/app/hooks';
 import React, { FunctionComponent } from 'react';
 
 type PostAuthorProps = {
-  userId: string;
+  author: string;
 };
 
-export const PostAuthor: FunctionComponent<PostAuthorProps> = ({ userId }) => {
-  const author = useAppSelector((state) =>
-    state.users.find((user) => user.id === userId)
-  );
+export const PostAuthor: FunctionComponent<PostAuthorProps> = ({ author }) => {
 
-  return <span>by {author ? author.name : 'Unknown author'}</span>;
+  return <span>by {author || 'Unknown author'}</span>;
 };

@@ -1,15 +1,13 @@
-import { useAppDispatch, useAppSelector } from '@/redux/app/hooks';
-import { addNewPost } from '@/redux/features/posts/postsSlice';
-import React, { FunctionComponent, useCallback, useState } from 'react';
+import { useAppSelector } from '@/redux/app/hooks';
+import { useAddNewPostMutation } from '@/redux/features/api/apiSlice';
+import React, { FunctionComponent, useState } from 'react';
 
 const AddPostForm: FunctionComponent = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [userId, setUserId] = useState('');
-  const [addRequestStatus, setAddRequestStatus] = useState('idle');
 
-  const dispatch = useAppDispatch();
-
+  const [addNewPost, { isLoading }] = useAddNewPostMutation();
   const users = useAppSelector((state) => state.users);
 
   const onTitleChanged = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -19,24 +17,20 @@ const AddPostForm: FunctionComponent = () => {
   const onAuthorChanged = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setUserId(e.target.value);
 
-  const canSave =
-    [title, content, userId].every(Boolean) && addRequestStatus === 'idle';
-  const onSavePostClicked = useCallback(async () => {
+  const canSave = [title, content, userId].every(Boolean) && !isLoading;
+
+  const onSavePostClicked = async () => {
     if (canSave) {
       try {
-        setAddRequestStatus('pending');
-        await dispatch(addNewPost({ title, content, user: userId })).unwrap();
+        await addNewPost({ title, content, user: userId }).unwrap();
         setTitle('');
         setContent('');
         setUserId('');
       } catch (err) {
         console.error('Failed to save the post: ', err);
-      } finally {
-        setAddRequestStatus('idle');
       }
     }
-  }, [canSave, content, dispatch, title, userId]);
-
+  };
   const usersOptions = users.map((user) => (
     <option key={user.id} value={user.id}>
       {user.name}

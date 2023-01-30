@@ -6,8 +6,6 @@ import {
 } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { IPost } from '@/pages/api/posts';
-// import { /*sub, */ parseISO } from 'date-fns';
-// import { IUserTuple } from '../users/usersSlice';
 
 export enum ReactionEnum {
   thumbsUp = 'thumbsUp',
@@ -17,19 +15,15 @@ export enum ReactionEnum {
   eyes = 'eyes',
 }
 
-type IReactions = Record<ReactionEnum, number>;
-
 export type IPostTuple = {
   id: string;
   title: string;
   content: string;
 
-  // user: IUserTuple;
   user: string;
 
   date: string;
-  reactions: IReactions;
-};
+} & IPost;
 
 export type IPostsState = {
   posts: IPostTuple[];
@@ -44,50 +38,10 @@ const initialState: IPostsState = {
 
 export const fetchPosts = createAsyncThunk(
   'posts/fetchPosts',
-  async (): Promise<IPostTuple[]> => {
+  async (): Promise<IPost[]> => {
     const response = await fetch('/api/posts');
-    const json = (await response.json()) as IPost[];
-    // debugger;
-    const result: IPostTuple[] = json.map((tuple) => ({
-      id: tuple.id.toString(),
-      title: tuple.title,
-      content: tuple.content,
-      user: tuple.userId.toString(),
-      date: tuple.date as unknown as string,
-      reactions: {
-        thumbsUp:
-          tuple.Reaction &&
-          Array.isArray(tuple.Reaction) &&
-          tuple.Reaction.length > 0
-            ? tuple.Reaction[0].thumbsUp
-            : 0,
-        hooray:
-          tuple.Reaction &&
-          Array.isArray(tuple.Reaction) &&
-          tuple.Reaction.length > 0
-            ? tuple.Reaction[0].hooray
-            : 0,
-        heart:
-          tuple.Reaction &&
-          Array.isArray(tuple.Reaction) &&
-          tuple.Reaction.length > 0
-            ? tuple.Reaction[0].heart
-            : 0,
-        rocket:
-          tuple.Reaction &&
-          Array.isArray(tuple.Reaction) &&
-          tuple.Reaction.length > 0
-            ? tuple.Reaction[0].rocket
-            : 0,
-        eyes:
-          tuple.Reaction &&
-          Array.isArray(tuple.Reaction) &&
-          tuple.Reaction.length > 0
-            ? tuple.Reaction[0].eyes
-            : 0,
-      },
-    }));
-    return result;
+    const json = JSON.parse(await response.text()) as IPost[];
+    return json;
   }
 );
 
@@ -124,7 +78,7 @@ const postsSlice = createSlice({
       const { postId, reaction } = action.payload;
       const existingPost = state.posts.find((post) => post.id === postId);
       if (existingPost) {
-        existingPost.reactions[reaction]++;
+        existingPost.Reaction[0][reaction]++;
       }
     },
 

@@ -60,7 +60,7 @@ const handler = async (
         },
       });
 
-      return res.status(201).send(post);
+      return res.status(201).send(JSON.stringify(post));
     } catch (error) {
       return res.status(500).send(`${JSON.stringify(error)}`);
     } finally {

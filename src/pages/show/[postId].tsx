@@ -1,10 +1,12 @@
 import React from 'react';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useAppSelector } from '@/redux/app/hooks';
 import Link from 'next/link';
 import { ReactionButtons } from '@/components/ReactionButtons';
-import { selectPostById } from '@/redux/features/posts/postsSlice';
+import { useGetPostQuery } from '@/redux/features/api/apiSlice';
+import { Spinner } from '@/components/Spinner';
+import { PostAuthor } from '@/components/PostAuthor';
+import { TimeAgo } from '@/components/TimeAgo';
 
 /**
  * SinglePostPage
@@ -13,29 +15,31 @@ const ShowPostPage: NextPage = (): JSX.Element => {
   const router = useRouter();
   const { postId } = router.query;
 
-  const post = useAppSelector((state) =>
-    selectPostById(state, postId as string)
-  );
+  const { data: post, isFetching, isSuccess } = useGetPostQuery(postId);
 
-  if (!post) {
-    return (
-      <section>
-        <h2>Post not found!</h2>
-      </section>
-    );
-  }
+  let content;
 
-  return (
-    <section>
+  if (isFetching) {
+    content = <Spinner text="Loading..." />;
+  } else if (isSuccess) {
+    content = (
       <article className="post">
         <h2>{post.title}</h2>
+        <div>
+          <PostAuthor author={post.User.name} />
+          <TimeAgo timestamp={post.date} />
+        </div>
         <p className="post-content">{post.content}</p>
         <ReactionButtons post={post} />
-        <Link href={`/edit/${post.id}`} className="button">
+        <Link href={`/api/edit/${post.id}`} className="button">
           Edit Post
         </Link>
       </article>
-    </section>
-  );
+    );
+  } else {
+    content = <h3>Page not found</h3>;
+  }
+
+  return <section>{content}</section>;
 };
 export default ShowPostPage;
