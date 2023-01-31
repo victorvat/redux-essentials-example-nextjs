@@ -1,10 +1,12 @@
-import { useAppSelector } from '@/redux/app/hooks';
-import { selectPostsByUser } from '@/redux/features/posts/postsSlice';
-import { selectUserById } from '@/redux/features/users/usersSlice';
-import { NextPage } from 'next';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
 import React from 'react';
+import { useAppSelector } from '@/redux/app/hooks';
+import Link from 'next/link';
+
+import { selectUserById } from '@/redux/features/users/usersSlice';
+import { selectPostsByUser } from '@/redux/features/posts/postsSlice';
+
+import { NextPage } from 'next';
+import { useRouter } from 'next/router';
 
 const UserPage: NextPage = (): JSX.Element => {
   const router = useRouter();
@@ -23,9 +25,6 @@ const UserPage: NextPage = (): JSX.Element => {
       <Link href={`/posts/${post.id}`}>{post.title}</Link>
     </li>
   ));
-
-  // console.log('UserPage() user is:', user);
-  // console.log('UserPage() postTitles is:', postTitles);
 
   return (
     <section>

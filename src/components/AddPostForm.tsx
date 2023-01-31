@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from '@/redux/app/hooks';
 import { addNewPost } from '@/redux/features/posts/postsSlice';
+import { IUserTuple, selectAllUsers } from '@/redux/features/users/usersSlice';
 import React, { FunctionComponent, useCallback, useState } from 'react';
 
 const AddPostForm: FunctionComponent = () => {
@@ -10,7 +11,7 @@ const AddPostForm: FunctionComponent = () => {
 
   const dispatch = useAppDispatch();
 
-  const users = useAppSelector((state) => state.users);
+  const users = useAppSelector<IUserTuple[]>((state) => selectAllUsers(state));
 
   const onTitleChanged = (e: React.ChangeEvent<HTMLInputElement>) =>
     setTitle(e.target.value);

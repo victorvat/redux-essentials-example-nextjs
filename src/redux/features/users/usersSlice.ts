@@ -1,12 +1,18 @@
 import { IUser } from '@/pages/api/users';
 import { RootState } from '@/redux/app/store';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSlice,
+} from '@reduxjs/toolkit';
 
 export type IUserTuple = {
   id: string;
   name: string;
 };
-const initialState: IUserTuple[] = [];
+const usersAdapter = createEntityAdapter<IUserTuple>();
+
+const initialState = usersAdapter.getInitialState();
 
 export const fetchUsers = createAsyncThunk(
   'users/fetchUsers',
@@ -26,15 +32,11 @@ const usersSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
-    builder.addCase(fetchUsers.fulfilled, (state, action) => {
-      return action.payload;
-    });
+    builder.addCase(fetchUsers.fulfilled, usersAdapter.setAll);
   },
 });
 
-export const selectAllUsers = (state: RootState) => state.users;
-
-export const selectUserById = (state: RootState, userId: string) =>
-  state.users.find((user) => user.id === userId);
-
 export default usersSlice.reducer;
+
+export const { selectAll: selectAllUsers, selectById: selectUserById } =
+  usersAdapter.getSelectors((state: RootState) => state.users);

@@ -1,5 +1,9 @@
 import { RootState } from '@/redux/app/store';
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  createEntityAdapter,
+} from '@reduxjs/toolkit';
 
 export type INotificationTuple = {
   id: string;
@@ -9,19 +13,18 @@ export type INotificationTuple = {
   read: boolean;
   isNew: boolean;
 };
-const initialState: INotificationTuple[] = [];
-
-export const selectAllNotifications = (state: RootState) => state.notifications;
+const notificationsAdapter = createEntityAdapter<INotificationTuple>({
+  sortComparer: (a, b) => b.date.localeCompare(a.date),
+});
 
 export const fetchNotifications = createAsyncThunk(
   'notifications/fetchNotifications',
   async (_, { getState }) => {
+    // eslint-disable-next-line no-use-before-define
     const allNotifications = selectAllNotifications(getState() as RootState);
     const [latestNotification] = allNotifications;
     const latestTimestamp = latestNotification ? latestNotification.date : '';
-    const response = await fetch(
-      `/fakeApi/notifications?since=${latestTimestamp}`
-    );
+    const response = await fetch(`/api/notifications?since=${latestTimestamp}`);
     const result = await response.json();
     return result;
   }
@@ -29,23 +32,21 @@ export const fetchNotifications = createAsyncThunk(
 
 const notificationsSlice = createSlice({
   name: 'notifications',
-  initialState,
+  initialState: notificationsAdapter.getInitialState(),
   reducers: {
-    allNotificationsRead(state /*, action */) {
-      state.forEach((notification) => {
+    allNotificationsRead(state, action) {
+      Object.values(state.entities).forEach((notification) => {
         notification.read = true;
       });
     },
   },
   extraReducers(builder) {
     builder.addCase(fetchNotifications.fulfilled, (state, action) => {
-      state.push(...action.payload);
-      state.forEach((notification) => {
+      notificationsAdapter.upsertMany(state, action.payload);
+      Object.values(state.entities).forEach((notification) => {
         // Any notifications we've read are no longer new
         notification.isNew = !notification.read;
       });
-      // Sort with newest first
-      state.sort((a, b) => b.date.localeCompare(a.date));
     });
   },
 });
@@ -53,3 +54,6 @@ const notificationsSlice = createSlice({
 export const { allNotificationsRead } = notificationsSlice.actions;
 
 export default notificationsSlice.reducer;
+
+export const { selectAll: selectAllNotifications } =
+  notificationsAdapter.getSelectors((state: RootState) => state.notifications);

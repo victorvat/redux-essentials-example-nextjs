@@ -38,7 +38,12 @@ export const ReactionButtons: FunctionComponent<ReactionButtonsProps> = ({
           )
         }
       >
-        {`${emoji} ${post?.reactions[name as ReactionEnum]}`}
+        {`${emoji} ${
+          post &&
+          post.Reaction &&
+          name &&
+          post.Reaction[0][name as ReactionEnum]
+        }`}
       </button>
     );
   });
